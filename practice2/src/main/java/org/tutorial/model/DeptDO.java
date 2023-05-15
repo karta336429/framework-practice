@@ -29,10 +29,10 @@ public class DeptDO implements Serializable {
 	@Column(name = "DEPTNO", nullable = false, columnDefinition = "INT AUTO_INCREMENT")
 	private Integer deptno;
 
-    @Column(name = "DNAME", columnDefinition = "VARCHAR2(14 CHAR)")
+    @Column(name = "DNAME", columnDefinition = "VARCHAR(14)")
     private String dname;
 
-    @Column(name = "LOC", columnDefinition = "VARCHAR2(13 CHAR)")
+    @Column(name = "LOC", columnDefinition = "VARCHAR(13)")
     private String loc;
 
     @OneToMany(mappedBy = "deptDO", cascade = CascadeType.REMOVE)

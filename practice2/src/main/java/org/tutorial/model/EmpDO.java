@@ -26,22 +26,22 @@ public class EmpDO implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "EMPNO", nullable = false, columnDefinition = "NUMBER(4)")
+	@Column(name = "EMPNO", nullable = false, columnDefinition = "INT AUTO_INCREMENT")
 	private Integer empno;
 
-    @Column(name = "ENAME", columnDefinition = "VARCHAR2(10 CHAR)")
+    @Column(name = "ENAME", columnDefinition = "VARCHAR(10)")
     private String ename;
 
-    @Column(name = "JOB", columnDefinition = "VARCHAR2(9 CHAR)")
+    @Column(name = "JOB", columnDefinition = "VARCHAR(9)")
     private String job;
 
     @Column(name = "HIREDATE", columnDefinition = "DATE")
     private LocalDate hiredate;
 
-    @Column(name = "SAL", columnDefinition = "NUMBER(7, 2)")
+    @Column(name = "SAL", columnDefinition = "INT")
     private Double sal;
 
-    @Column(name = "COMM", columnDefinition = "NUMBER(7, 2)")
+    @Column(name = "COMM", columnDefinition = "INT")
     private Double comm;
 
     @ManyToOne
