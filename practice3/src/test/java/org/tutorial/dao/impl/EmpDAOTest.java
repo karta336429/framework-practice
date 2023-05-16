@@ -1,4 +1,4 @@
-package dao.impl;
+package org.tutorial.dao.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
