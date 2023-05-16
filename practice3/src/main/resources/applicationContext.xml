@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!-- scan base-package 及其子 package，將標註相關 annotation 的類別註冊為 Spring Bean -->
+    <context:component-scan base-package="org.tutorial" />
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
+        <property name="url" value="jdbc:mysql://localhost:3306/practice?serverTimezone=Asia/Taipei" />
+        <property name="username" value="root" />
+        <property name="password" value="1qaz@WSX" />
+    </bean>
+
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="jpaVendorAdapter">
+            <!-- 使用 Hibernate 作為 JPA 實作 -->
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+        </property>
+        <!-- scan Entity 位於的 package -->
+        <property name="packagesToScan" value="org.tutorial.model"/>
+        <property name="jpaProperties">
+            <props>
+                <!-- SQL方言 -->
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+                <!-- 是否要顯示實際操作資料庫時的SQL -->
+                <prop key="hibernate.show_sql">true</prop>
+                <!-- 是否要格式化操作資料庫時的SQL -->
+                <prop key="hibernate.format_sql">true</prop>
+                <!-- 依照 entity annotation 自動建立 schema, value: none, update, create, create-drop -->
+                <!-- <prop key="hibernate.hbm2ddl.auto">none</prop>-->
+            </props>
+        </property>
+    </bean>
+
+    <!-- bean post-processor for JPA annotations -->
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+
+    <!-- Transaction Manager -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+
+    <!-- 啟用 @Transactional annotation 支援 -->
+    <tx:annotation-driven/>
+</beans>
