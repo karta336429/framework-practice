@@ -103,7 +103,7 @@ public class EmpDAOImpl implements EmpDAO {
 		// JPQL : 直接使用實體類別寫Query
 		Query query = entityManager.createQuery("SELECT emp FROM EmpDO emp");
 		// Native Query : 直接寫MySQL的語法
-//		Query query = entityManager.createNativeQuery("SELECT * FROM DEPT2");
+//		Query query = entityManager.createNativeQuery("SELECT * FROM EMP2");
 		// 透過此方法取得查詢回來的資料
 		List<EmpDO> list = query.getResultList();
 		return list;
