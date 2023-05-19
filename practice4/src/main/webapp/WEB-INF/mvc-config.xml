@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+	
+	<!-- scan base-package 及其子 package，將標註相關 annotation 的類別註冊為 Spring Bean -->
+	<context:component-scan base-package="org.tutorial.controller" />
+	
+	<!-- 啟用 Spring MVC @Controller annotation 註解功能 -->
+	<mvc:annotation-driven />
+	
+	<!-- viewResolver setting -->
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/view/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+	<!-- 靜態資源目錄 -->
+	<mvc:resources location="/resources/" mapping="/resources/**" />
+
+</beans>
