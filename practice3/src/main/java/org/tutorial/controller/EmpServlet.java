@@ -12,373 +12,382 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.tutorial.config.AppConfig;
 import org.tutorial.model.DeptDO;
 import org.tutorial.model.EmpDO;
 import org.tutorial.service.DeptService;
 import org.tutorial.service.EmpService;
-import org.tutorial.service.impl.DeptServiceImpl;
-import org.tutorial.service.impl.EmpServiceImpl;
 
 @WebServlet("/emp/emp.do")
 public class EmpServlet extends HttpServlet {
 
-    @Override
-    public void doGet(HttpServletRequest req, HttpServletResponse res)
-            throws ServletException, IOException {
+	@Override
+	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 
-        req.setCharacterEncoding("UTF-8");
-        String action = req.getParameter("action");
+		req.setCharacterEncoding("UTF-8");
+		String action = req.getParameter("action");
 
-        if ("listAll".equals(action)) {
-            setDeptDOsAndEmpDOsRequestAttribute(req); // 查出所有部門及員工存入req，供/emp/listAll.jsp顯示使用
-            RequestDispatcher successView = req.getRequestDispatcher("/emp/listAll.jsp");
-            successView.forward(req, res);
-            return;
-        }
+		if ("listAll".equals(action)) {
+			setDeptDOsAndEmpDOsRequestAttribute(req); // 查出所有部門及員工存入req，供/emp/listAll.jsp顯示使用
+			RequestDispatcher successView = req.getRequestDispatcher("/emp/listAll.jsp");
+			successView.forward(req, res);
+			return;
+		}
 
-        if ("add".equals(action)) {
-            setDeptDOsRequestAttribute(req); // 查出所有部門及員工存入req，供/emp/add.jsp顯示使用
-            RequestDispatcher successView = req.getRequestDispatcher("/emp/add.jsp");
-            successView.forward(req, res);
-            return;
-        }
+		if ("add".equals(action)) {
+			setDeptDOsRequestAttribute(req); // 查出所有部門及員工存入req，供/emp/add.jsp顯示使用
+			RequestDispatcher successView = req.getRequestDispatcher("/emp/add.jsp");
+			successView.forward(req, res);
+			return;
+		}
 
-        doPost(req, res);
-    }
+		doPost(req, res);
+	}
 
-    @Override
-    public void doPost(HttpServletRequest req, HttpServletResponse res)
-            throws ServletException, IOException {
+	@Override
+	public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 
-        req.setCharacterEncoding("UTF-8");
-        String action = req.getParameter("action");
+		req.setCharacterEncoding("UTF-8");
+		String action = req.getParameter("action");
 
-        if ("getOne_For_Display".equals(action)) {
+		if ("getOne_For_Display".equals(action)) {
 
-            List<String> errorMsgs = new LinkedList<String>();
-            req.setAttribute("errorMsgs", errorMsgs);
+			List<String> errorMsgs = new LinkedList<String>();
+			req.setAttribute("errorMsgs", errorMsgs);
 
-            try {
-                // 1.接收請求參數 - 輸入格式的錯誤處理
-                String str = req.getParameter("empno");
-                if (str == null || (str.trim()).length() == 0) {
-                    errorMsgs.add("請輸入員工編號");
-                }
-                // Send the use back to the form, if there were errors
-                if (!errorMsgs.isEmpty()) {
-                    setDeptDOsAndEmpDOsRequestAttribute(req); // 查出所有部門及員工存入req，供/index.jsp顯示使用
-                    RequestDispatcher failureView = req.getRequestDispatcher("/index.jsp");
-                    failureView.forward(req, res);
-                    return;
-                }
+			try {
+				// 1.接收請求參數 - 輸入格式的錯誤處理
+				String str = req.getParameter("empno");
+				if (str == null || (str.trim()).length() == 0) {
+					errorMsgs.add("請輸入員工編號");
+				}
+				// Send the use back to the form, if there were errors
+				if (!errorMsgs.isEmpty()) {
+					setDeptDOsAndEmpDOsRequestAttribute(req); // 查出所有部門及員工存入req，供/index.jsp顯示使用
+					RequestDispatcher failureView = req.getRequestDispatcher("/index.jsp");
+					failureView.forward(req, res);
+					return;
+				}
 
-                Integer empno = null;
-                try {
-                    empno = new Integer(str);
-                } catch (Exception e) {
-                    errorMsgs.add("員工編號格式不正確");
-                }
-                // Send the use back to the form, if there were errors
-                if (!errorMsgs.isEmpty()) {
-                    setDeptDOsAndEmpDOsRequestAttribute(req); // 查出所有部門及員工存入req，供/index.jsp顯示使用
-                    RequestDispatcher failureView = req.getRequestDispatcher("/index.jsp");
-                    failureView.forward(req, res);
-                    return;
-                }
+				Integer empno = null;
+				try {
+					empno = new Integer(str);
+				} catch (Exception e) {
+					errorMsgs.add("員工編號格式不正確");
+				}
+				// Send the use back to the form, if there were errors
+				if (!errorMsgs.isEmpty()) {
+					setDeptDOsAndEmpDOsRequestAttribute(req); // 查出所有部門及員工存入req，供/index.jsp顯示使用
+					RequestDispatcher failureView = req.getRequestDispatcher("/index.jsp");
+					failureView.forward(req, res);
+					return;
+				}
 
-                // 2.開始查詢資料
-                EmpService empService = getEmpServiceFromSpring();
-                EmpDO empDO = empService.getOneEmp(empno);
-                if (empDO == null) {
-                    errorMsgs.add("查無資料");
-                }
-                // Send the use back to the form, if there were errors
-                if (!errorMsgs.isEmpty()) {
-                    setDeptDOsAndEmpDOsRequestAttribute(req); // 查出所有部門及員工存入req，供/index.jsp顯示使用
-                    RequestDispatcher failureView = req.getRequestDispatcher("/index.jsp");
-                    failureView.forward(req, res);
-                    return;
-                }
+				// 2.開始查詢資料
+				EmpService empService = getEmpServiceFromSpring();
+				EmpDO empDO = empService.getOneEmp(empno);
+				if (empDO == null) {
+					errorMsgs.add("查無資料");
+				}
+				// Send the use back to the form, if there were errors
+				if (!errorMsgs.isEmpty()) {
+					setDeptDOsAndEmpDOsRequestAttribute(req); // 查出所有部門及員工存入req，供/index.jsp顯示使用
+					RequestDispatcher failureView = req.getRequestDispatcher("/index.jsp");
+					failureView.forward(req, res);
+					return;
+				}
 
-                // 3.查詢完成，準備轉交(Send the Success view)
-                req.setAttribute("empDO", empDO);
-                setDeptDOsRequestAttribute(req); // 查出所有部門存入req，供/emp/listOne.jsp顯示使用
-                RequestDispatcher successView = req.getRequestDispatcher("/emp/listOne.jsp"); // 轉交/emp/listOne.jsp
-                successView.forward(req, res);
+				// 3.查詢完成，準備轉交(Send the Success view)
+				req.setAttribute("empDO", empDO);
+				setDeptDOsRequestAttribute(req); // 查出所有部門存入req，供/emp/listOne.jsp顯示使用
+				RequestDispatcher successView = req.getRequestDispatcher("/emp/listOne.jsp"); // 轉交/emp/listOne.jsp
+				successView.forward(req, res);
 
+				// 其他可能的錯誤處理
+			} catch (Exception e) {
+				e.printStackTrace();
+				errorMsgs.add("無法取得資料: " + e.getMessage());
+				setDeptDOsAndEmpDOsRequestAttribute(req); // 查出所有部門及員工存入req，供/index.jsp顯示使用
+				RequestDispatcher failureView = req.getRequestDispatcher("/index.jsp");
+				failureView.forward(req, res);
+			}
+		}
 
-                // 其他可能的錯誤處理
-            } catch (Exception e) {
-                e.printStackTrace();
-                errorMsgs.add("無法取得資料: " + e.getMessage());
-                setDeptDOsAndEmpDOsRequestAttribute(req); // 查出所有部門及員工存入req，供/index.jsp顯示使用
-                RequestDispatcher failureView = req.getRequestDispatcher("/index.jsp");
-                failureView.forward(req, res);
-            }
-        }
+		if ("getOne_For_Update".equals(action)) {
 
+			List<String> errorMsgs = new LinkedList<String>();
+			req.setAttribute("errorMsgs", errorMsgs);
 
-        if ("getOne_For_Update".equals(action)) {
+			try {
+				// 1.接收請求參數
+				Integer empno = new Integer(req.getParameter("empno"));
 
-            List<String> errorMsgs = new LinkedList<String>();
-            req.setAttribute("errorMsgs", errorMsgs);
+				// 2.開始查詢資料
+				EmpService empService = getEmpServiceFromSpring();
+				EmpDO empDO = empService.getOneEmp(empno);
 
-            try {
-                // 1.接收請求參數
-                Integer empno = new Integer(req.getParameter("empno"));
+				// 3.查詢完成，準備轉交(Send the Success view)
+				req.setAttribute("empDO", empDO);
+				setDeptDOsRequestAttribute(req); // 查出所有部門存入req，供/emp/update.jsp顯示使用
+				RequestDispatcher successView = req.getRequestDispatcher("/emp/update.jsp");// 轉交/emp/update.jsp
+				successView.forward(req, res);
 
-                // 2.開始查詢資料
-                EmpService empService = getEmpServiceFromSpring();
-                EmpDO empDO = empService.getOneEmp(empno);
+				// 其他可能的錯誤處理
+			} catch (Exception e) {
+				e.printStackTrace();
+				errorMsgs.add("無法取得要修改的資料: " + e.getMessage());
+				setDeptDOsAndEmpDOsRequestAttribute(req); // 查出所有部門及員工存入req，供/emp/listAll.jsp顯示使用
+				RequestDispatcher failureView = req.getRequestDispatcher("/emp/listAll.jsp");
+				failureView.forward(req, res);
+			}
+		}
 
-                // 3.查詢完成，準備轉交(Send the Success view)
-                req.setAttribute("empDO", empDO);
-                setDeptDOsRequestAttribute(req); // 查出所有部門存入req，供/emp/update.jsp顯示使用
-                RequestDispatcher successView = req.getRequestDispatcher("/emp/update.jsp");// 轉交/emp/update.jsp
-                successView.forward(req, res);
+		if ("update".equals(action)) {
 
-                // 其他可能的錯誤處理
-            } catch (Exception e) {
-                e.printStackTrace();
-                errorMsgs.add("無法取得要修改的資料: " + e.getMessage());
-                setDeptDOsAndEmpDOsRequestAttribute(req); // 查出所有部門及員工存入req，供/emp/listAll.jsp顯示使用
-                RequestDispatcher failureView = req.getRequestDispatcher("/emp/listAll.jsp");
-                failureView.forward(req, res);
-            }
-        }
+			List<String> errorMsgs = new LinkedList<String>();
+			req.setAttribute("errorMsgs", errorMsgs);
 
+			try {
+				// 1.接收請求參數 - 輸入格式的錯誤處理
+				Integer empno = new Integer(req.getParameter("empno").trim());
 
-        if ("update".equals(action)) {
+				String ename = req.getParameter("ename");
+				if (ename == null || ename.trim().length() == 0) {
+					errorMsgs.add("員工姓名: 請勿空白");
+				}
+				// 以下練習正則(規)表示式(regular-expression)
+				String enameReg = "^[(\u4e00-\u9fa5)(a-zA-Z0-9_)]{2,10}$";
+				if (!ename.trim().matches(enameReg)) {
+					errorMsgs.add("員工姓名: 只能是中、英文字母、數字和_，且長度必需在2到10之間");
+				}
 
-            List<String> errorMsgs = new LinkedList<String>();
-            req.setAttribute("errorMsgs", errorMsgs);
+				String job = req.getParameter("job").trim();
+				LocalDate hiredate = null;
+				try {
+					hiredate = LocalDate.parse(req.getParameter("hiredate").trim());
+				} catch (IllegalArgumentException e) {
+					hiredate = LocalDate.now();
+					errorMsgs.add("請輸入日期");
+				}
 
-            try {
-                // 1.接收請求參數 - 輸入格式的錯誤處理
-                Integer empno = new Integer(req.getParameter("empno").trim());
+				Double sal = null;
+				try {
+					sal = new Double(req.getParameter("sal").trim());
+				} catch (NumberFormatException e) {
+					sal = 0.0;
+					errorMsgs.add("薪水請填數字");
+				}
 
-                String ename = req.getParameter("ename");
-                if (ename == null || ename.trim().length() == 0) {
-                    errorMsgs.add("員工姓名: 請勿空白");
-                }
-                // 以下練習正則(規)表示式(regular-expression)
-                String enameReg = "^[(\u4e00-\u9fa5)(a-zA-Z0-9_)]{2,10}$";
-                if (!ename.trim().matches(enameReg)) {
-                    errorMsgs.add("員工姓名: 只能是中、英文字母、數字和_，且長度必需在2到10之間");
-                }
+				Double comm = null;
+				try {
+					comm = new Double(req.getParameter("comm").trim());
+				} catch (NumberFormatException e) {
+					comm = 0.0;
+					errorMsgs.add("獎金請填數字");
+				}
 
-                String job = req.getParameter("job").trim();
-                LocalDate hiredate = null;
-                try {
-                    hiredate = LocalDate.parse(req.getParameter("hiredate").trim());
-                } catch (IllegalArgumentException e) {
-                    hiredate = LocalDate.now();
-                    errorMsgs.add("請輸入日期");
-                }
+				Integer deptno = new Integer(req.getParameter("deptno").trim());
 
-                Double sal = null;
-                try {
-                    sal = new Double(req.getParameter("sal").trim());
-                } catch (NumberFormatException e) {
-                    sal = 0.0;
-                    errorMsgs.add("薪水請填數字");
-                }
+				EmpDO empDO = new EmpDO();
+				empDO.setEmpno(empno);
+				empDO.setEname(ename);
+				empDO.setJob(job);
+				empDO.setHiredate(hiredate);
+				empDO.setSal(sal);
+				empDO.setComm(comm);
+				DeptDO deptDO = new DeptDO();
+				deptDO.setDeptno(deptno);
+				empDO.setDeptDO(deptDO);
 
-                Double comm = null;
-                try {
-                    comm = new Double(req.getParameter("comm").trim());
-                } catch (NumberFormatException e) {
-                    comm = 0.0;
-                    errorMsgs.add("獎金請填數字");
-                }
+				// Send the use back to the form, if there were errors
+				if (!errorMsgs.isEmpty()) {
+					req.setAttribute("empDO", empDO); // 含有輸入格式錯誤的empDO物件，也存入req
+					setDeptDOsRequestAttribute(req); // 查出所有部門存入req，供/emp/update.jsp顯示使用
+					RequestDispatcher failureView = req.getRequestDispatcher("/emp/update.jsp");
+					failureView.forward(req, res);
+					return;
+				}
 
-                Integer deptno = new Integer(req.getParameter("deptno").trim());
+				// 2.開始修改資料
+				EmpService empService = getEmpServiceFromSpring();
+				empDO = empService.updateEmp(empDO);
 
-                EmpDO empDO = new EmpDO();
-                empDO.setEmpno(empno);
-                empDO.setEname(ename);
-                empDO.setJob(job);
-                empDO.setHiredate(hiredate);
-                empDO.setSal(sal);
-                empDO.setComm(comm);
-                DeptDO deptDO = new DeptDO();
-                deptDO.setDeptno(deptno);
-                empDO.setDeptDO(deptDO);
+				// 3.修改完成,準備轉交(Send the Success view)
+				req.setAttribute("empDO", empDO);
+				setDeptDOsRequestAttribute(req); // 查出所有部門存入req，供/emp/listOne.jsp顯示使用
+				RequestDispatcher successView = req.getRequestDispatcher("/emp/listOne.jsp"); // 轉交/emp/listOne.jsp
+				successView.forward(req, res);
 
-                // Send the use back to the form, if there were errors
-                if (!errorMsgs.isEmpty()) {
-                    req.setAttribute("empDO", empDO); // 含有輸入格式錯誤的empDO物件，也存入req
-                    setDeptDOsRequestAttribute(req); // 查出所有部門存入req，供/emp/update.jsp顯示使用
-                    RequestDispatcher failureView = req.getRequestDispatcher("/emp/update.jsp");
-                    failureView.forward(req, res);
-                    return;
-                }
+				// 其他可能的錯誤處理
+			} catch (Exception e) {
+				e.printStackTrace();
+				errorMsgs.add("修改資料失敗:" + e.getMessage());
+				setDeptDOsRequestAttribute(req); // 查出所有部門存入req，供/emp/update.jsp顯示使用
+				RequestDispatcher failureView = req.getRequestDispatcher("/emp/update.jsp");
+				failureView.forward(req, res);
+			}
+		}
 
-                // 2.開始修改資料
-                EmpService empService = getEmpServiceFromSpring();
-                empDO = empService.updateEmp(empDO);
+		if ("insert".equals(action)) {
 
-                // 3.修改完成,準備轉交(Send the Success view)
-                req.setAttribute("empDO", empDO);
-                setDeptDOsRequestAttribute(req); // 查出所有部門存入req，供/emp/listOne.jsp顯示使用
-                RequestDispatcher successView = req.getRequestDispatcher("/emp/listOne.jsp"); // 轉交/emp/listOne.jsp
-                successView.forward(req, res);
+			List<String> errorMsgs = new LinkedList<String>();
+			req.setAttribute("errorMsgs", errorMsgs);
 
-                // 其他可能的錯誤處理
-            } catch (Exception e) {
-                e.printStackTrace();
-                errorMsgs.add("修改資料失敗:" + e.getMessage());
-                setDeptDOsRequestAttribute(req); // 查出所有部門存入req，供/emp/update.jsp顯示使用
-                RequestDispatcher failureView = req
-                        .getRequestDispatcher("/emp/update.jsp");
-                failureView.forward(req, res);
-            }
-        }
+			try {
+				// 1.接收請求參數 - 輸入格式的錯誤處理
+				String ename = req.getParameter("ename");
+				if (ename == null || ename.trim().length() == 0) {
+					errorMsgs.add("員工姓名: 請勿空白");
+				}
+				// 以下練習正則(規)表示式(regular-expression)
+				String enameReg = "^[(\u4e00-\u9fa5)(a-zA-Z0-9_)]{2,10}$";
+				if (!ename.trim().matches(enameReg)) {
+					errorMsgs.add("員工姓名:只能是中、英文字母、數字和_，且長度必需在2到10之間");
+				}
 
-        if ("insert".equals(action)) {
+				String job = req.getParameter("job").trim();
+				LocalDate hiredate = null;
+				try {
+					hiredate = LocalDate.parse(req.getParameter("hiredate").trim());
+				} catch (IllegalArgumentException e) {
+					hiredate = LocalDate.now();
+					errorMsgs.add("請輸入日期");
+				}
 
-            List<String> errorMsgs = new LinkedList<String>();
-            req.setAttribute("errorMsgs", errorMsgs);
+				Double sal = null;
+				try {
+					sal = new Double(req.getParameter("sal").trim());
+				} catch (NumberFormatException e) {
+					sal = 0.0;
+					errorMsgs.add("薪水請填數字");
+				}
 
-            try {
-                // 1.接收請求參數 - 輸入格式的錯誤處理
-                String ename = req.getParameter("ename");
-                if (ename == null || ename.trim().length() == 0) {
-                    errorMsgs.add("員工姓名: 請勿空白");
-                }
-                // 以下練習正則(規)表示式(regular-expression)
-                String enameReg = "^[(\u4e00-\u9fa5)(a-zA-Z0-9_)]{2,10}$";
-                if (!ename.trim().matches(enameReg)) {
-                    errorMsgs.add("員工姓名:只能是中、英文字母、數字和_，且長度必需在2到10之間");
-                }
+				Double comm = null;
+				try {
+					comm = new Double(req.getParameter("comm").trim());
+				} catch (NumberFormatException e) {
+					comm = 0.0;
+					errorMsgs.add("獎金請填數字");
+				}
 
-                String job = req.getParameter("job").trim();
-                LocalDate hiredate = null;
-                try {
-                    hiredate = LocalDate.parse(req.getParameter("hiredate").trim());
-                } catch (IllegalArgumentException e) {
-                    hiredate = LocalDate.now();
-                    errorMsgs.add("請輸入日期");
-                }
+				Integer deptno = new Integer(req.getParameter("deptno").trim());
 
-                Double sal = null;
-                try {
-                    sal = new Double(req.getParameter("sal").trim());
-                } catch (NumberFormatException e) {
-                    sal = 0.0;
-                    errorMsgs.add("薪水請填數字");
-                }
+				EmpDO empDO = new EmpDO();
+				empDO.setEname(ename);
+				empDO.setJob(job);
+				empDO.setHiredate(hiredate);
+				empDO.setSal(sal);
+				empDO.setComm(comm);
+				DeptDO deptDO = new DeptDO();
+				deptDO.setDeptno(deptno);
+				empDO.setDeptDO(deptDO);
 
-                Double comm = null;
-                try {
-                    comm = new Double(req.getParameter("comm").trim());
-                } catch (NumberFormatException e) {
-                    comm = 0.0;
-                    errorMsgs.add("獎金請填數字");
-                }
+				// Send the use back to the form, if there were errors
+				if (!errorMsgs.isEmpty()) {
+					req.setAttribute("empDO", empDO); // 含有輸入格式錯誤的empDO物件，也存入req
+					setDeptDOsRequestAttribute(req); // 查出所有部門存入req，供/emp/add.jsp顯示使用
+					RequestDispatcher failureView = req.getRequestDispatcher("/emp/add.jsp");
+					failureView.forward(req, res);
+					return;
+				}
 
-                Integer deptno = new Integer(req.getParameter("deptno").trim());
+				// 2.開始新增資料
+				EmpService empService = getEmpServiceFromSpring();
+				empService.addEmp(empDO);
 
-                EmpDO empDO = new EmpDO();
-                empDO.setEname(ename);
-                empDO.setJob(job);
-                empDO.setHiredate(hiredate);
-                empDO.setSal(sal);
-                empDO.setComm(comm);
-                DeptDO deptDO = new DeptDO();
-                deptDO.setDeptno(deptno);
-                empDO.setDeptDO(deptDO);
+				// 3.新增完成，準備轉交(Send the Success view)
+				setDeptDOsAndEmpDOsRequestAttribute(req); // 查出所有部門及員工存入req，供/emp/listAll.jsp顯示使用
+				RequestDispatcher successView = req.getRequestDispatcher("/emp/listAll.jsp"); // 轉交/emp/listAll.jsp
+				successView.forward(req, res);
 
-                // Send the use back to the form, if there were errors
-                if (!errorMsgs.isEmpty()) {
-                    req.setAttribute("empDO", empDO); // 含有輸入格式錯誤的empDO物件，也存入req
-                    setDeptDOsRequestAttribute(req); // 查出所有部門存入req，供/emp/add.jsp顯示使用
-                    RequestDispatcher failureView = req.getRequestDispatcher("/emp/add.jsp");
-                    failureView.forward(req, res);
-                    return;
-                }
+				// 其他可能的錯誤處理
+			} catch (Exception e) {
+				e.printStackTrace();
+				errorMsgs.add(e.getMessage());
+				setDeptDOsRequestAttribute(req); // 查出所有部門存入req，供/emp/add.jsp顯示使用
+				RequestDispatcher failureView = req.getRequestDispatcher("/emp/add.jsp");
+				failureView.forward(req, res);
+			}
+		}
 
-                // 2.開始新增資料
-                EmpService empService = getEmpServiceFromSpring();
-                empService.addEmp(empDO);
+		if ("delete".equals(action)) {
 
-                // 3.新增完成，準備轉交(Send the Success view)
-                setDeptDOsAndEmpDOsRequestAttribute(req); // 查出所有部門及員工存入req，供/emp/listAll.jsp顯示使用
-                RequestDispatcher successView = req.getRequestDispatcher("/emp/listAll.jsp"); // 轉交/emp/listAll.jsp
-                successView.forward(req, res);
+			List<String> errorMsgs = new LinkedList<String>();
+			req.setAttribute("errorMsgs", errorMsgs);
 
-                // 其他可能的錯誤處理
-            } catch (Exception e) {
-                e.printStackTrace();
-                errorMsgs.add(e.getMessage());
-                setDeptDOsRequestAttribute(req); // 查出所有部門存入req，供/emp/add.jsp顯示使用
-                RequestDispatcher failureView = req.getRequestDispatcher("/emp/add.jsp");
-                failureView.forward(req, res);
-            }
-        }
+			try {
+				// 1.接收請求參數
+				Integer empno = new Integer(req.getParameter("empno"));
 
+				// 2.開始刪除資料
+				EmpService empService = getEmpServiceFromSpring();
+				empService.deleteEmp(empno);
 
-        if ("delete".equals(action)) {
+				// 3.刪除完成,準備轉交(Send the Success view)
+				setDeptDOsAndEmpDOsRequestAttribute(req); // 查出所有部門及員工存入req，供/emp/listAll.jsp顯示使用
+				RequestDispatcher successView = req.getRequestDispatcher("/emp/listAll.jsp");// 轉交/emp/listAll.jsp
+				successView.forward(req, res);
 
-            List<String> errorMsgs = new LinkedList<String>();
-            req.setAttribute("errorMsgs", errorMsgs);
+				// 其他可能的錯誤處理
+			} catch (Exception e) {
+				e.printStackTrace();
+				errorMsgs.add("刪除資料失敗: " + e.getMessage());
+				setDeptDOsAndEmpDOsRequestAttribute(req); // 查出所有部門及員工存入req，供/emp/listAll.jsp顯示使用
+				RequestDispatcher failureView = req.getRequestDispatcher("/emp/listAll.jsp");
+				failureView.forward(req, res);
+			}
+		}
+	}
 
-            try {
-                // 1.接收請求參數
-                Integer empno = new Integer(req.getParameter("empno"));
+	// 查出所有部門及員工存入req，供 /index.jsp 或 /emp/listAll.jsp 畫面顯示使用
+	// 但不推薦這種寫法，因為有 side effect 問題
+	private void setDeptDOsAndEmpDOsRequestAttribute(HttpServletRequest req) {
+		DeptService deptService = getDeptServiceFromSpring();
+		List<DeptDO> deptDOs = deptService.getAll();
+		req.setAttribute("deptDOs", deptDOs);
 
-                // 2.開始刪除資料
-                EmpService empService = getEmpServiceFromSpring();
-                empService.deleteEmp(empno);
+		EmpService empService = getEmpServiceFromSpring();
+		List<EmpDO> empDOs = empService.getAll();
+		req.setAttribute("empDOs", empDOs);
+	}
 
-                // 3.刪除完成,準備轉交(Send the Success view)
-                setDeptDOsAndEmpDOsRequestAttribute(req); // 查出所有部門及員工存入req，供/emp/listAll.jsp顯示使用
-                RequestDispatcher successView = req.getRequestDispatcher("/emp/listAll.jsp");// 轉交/emp/listAll.jsp
-                successView.forward(req, res);
+	// 查出所有部門存入req，供 /emp/add.jsp 或 /emp/update.jsp 或 /emp/listOne.jsp 畫面顯示使用
+	private void setDeptDOsRequestAttribute(HttpServletRequest req) {
+		DeptService deptService = getDeptServiceFromSpring();
+		List<DeptDO> deptDOs = deptService.getAll();
+		req.setAttribute("deptDOs", deptDOs);
+	}
 
-                // 其他可能的錯誤處理
-            } catch (Exception e) {
-                e.printStackTrace();
-                errorMsgs.add("刪除資料失敗: " + e.getMessage());
-                setDeptDOsAndEmpDOsRequestAttribute(req); // 查出所有部門及員工存入req，供/emp/listAll.jsp顯示使用
-                RequestDispatcher failureView = req.getRequestDispatcher("/emp/listAll.jsp");
-                failureView.forward(req, res);
-            }
-        }
-    }
+	// 將 Service 物件生成交由 Spring 管理，不用再自己 new 物件
+	// 此種取得 Spring Bean 的方式為暫時測試用
+	private EmpService getEmpServiceFromSpring() {
 
-    // 查出所有部門及員工存入req，供 /index.jsp 或 /emp/listAll.jsp 畫面顯示使用
-    // 但不推薦這種寫法，因為有 side effect 問題
-    private void setDeptDOsAndEmpDOsRequestAttribute(HttpServletRequest req) {
-        DeptService deptService = getDeptServiceFromSpring();
-        List<DeptDO> deptDOs = deptService.getAll();
-        req.setAttribute("deptDOs", deptDOs);
+		// XML組態定義
+//		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
 
-        EmpService empService = getEmpServiceFromSpring();
-        List<EmpDO> empDOs = empService.getAll();
-        req.setAttribute("empDOs", empDOs);
-    }
+		// JAVA類別組態定義
+		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+		context.register(AppConfig.class);
+		context.refresh();
 
-    // 查出所有部門存入req，供 /emp/add.jsp 或 /emp/update.jsp 或 /emp/listOne.jsp 畫面顯示使用
-    private void setDeptDOsRequestAttribute(HttpServletRequest req) {
-        DeptService deptService = getDeptServiceFromSpring();
-        List<DeptDO> deptDOs = deptService.getAll();
-        req.setAttribute("deptDOs", deptDOs);
-    }
-    
- // 將 Service 物件生成交由 Spring 管理，不用再自己 new 物件
-    // 此種取得 Spring Bean 的方式為暫時測試用
-    private EmpService getEmpServiceFromSpring() {
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
-        return context.getBean("empServiceImpl", EmpService.class);
-    }
+		return context.getBean("empServiceImpl", EmpService.class);
+	}
 
-    // 將 Service 物件生成交由 Spring 管理，不用再自己 new 物件
-    // 此種取得 Spring Bean 的方式為暫時測試用
-    private DeptService getDeptServiceFromSpring() {
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
-        return context.getBean("deptServiceImpl", DeptService.class);
-    }
+	// 將 Service 物件生成交由 Spring 管理，不用再自己 new 物件
+	// 此種取得 Spring Bean 的方式為暫時測試用
+	private DeptService getDeptServiceFromSpring() {
+
+		// XML組態定義
+//		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+
+		// JAVA類別組態定義
+		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+		context.register(AppConfig.class);
+		context.refresh();
+		
+		return context.getBean("deptServiceImpl", DeptService.class);
+	}
 
 }
