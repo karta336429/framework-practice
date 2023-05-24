@@ -1,4 +1,4 @@
-# Practice#4 - Thymeleaf
+# Practice#4 - Spring MVC
 
 - 此練習為將 Servlet 改寫為 Spring MVC 架構
 - 先增加相關套件注入在 pom.xml
