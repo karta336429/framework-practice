@@ -10,13 +10,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.tutorial.model.Entity.DeptDO;
 import org.tutorial.model.Entity.EmpDO;
 import org.tutorial.service.DeptService;
 
-@RunWith(SpringRunner.class)
-@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
+@RunWith(SpringJUnit4ClassRunner.class)	
+@ContextConfiguration(locations = "classpath:applicationContext.xml")
 public class DeptServiceTest {
 
 	@Autowired

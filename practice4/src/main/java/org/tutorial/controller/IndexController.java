@@ -28,8 +28,8 @@ public class IndexController {
 	public String index(Model model) {
 		List<DeptDO> deptDOs = deptService.getAll();
 		List<EmpDO> empDOs = empService.getAll();
-		model.addAttribute("deptDOs",transformDeptVOs(deptDOs));
-		model.addAttribute("empDOs", transformEmpVOs(empDOs));
+		model.addAttribute("deptVOs",transformDeptVOs(deptDOs));
+		model.addAttribute("empVOs", transformEmpVOs(empDOs));
 		return "index";
 	}
 

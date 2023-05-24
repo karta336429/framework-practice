@@ -38,8 +38,8 @@
                 <form method="POST" action="${pageContext.request.contextPath}/emp/getOne_For_Display" >
                     <b>選擇員工編號:</b>
                     <select size="1" name="empno">
-                        <c:forEach var="empDO" items="${empDOs}" >
-                            <option value="${empDO.empno}">${empDO.empno}</option>
+                        <c:forEach var="empVO" items="${empVOs}" >
+                            <option value="${empVO.empno}">${empVO.empno}</option>
                         </c:forEach>
                     </select>
                     <input type="submit" value="送出">
@@ -50,8 +50,8 @@
                 <form method="POST" action="${pageContext.request.contextPath}/emp/getOne_For_Display" >
                     <b>選擇員工姓名:</b>
                     <select size="1" name="empno">
-                        <c:forEach var="empDO" items="${empDOs}" >
-                            <option value="${empDO.empno}">${empDO.ename}</option>
+                        <c:forEach var="empVO" items="${empVOs}" >
+                            <option value="${empVO.empno}">${empVO.ename}</option>
                         </c:forEach>
                     </select>
                     <input type="submit" value="送出">
@@ -62,8 +62,8 @@
                 <form method="POST" action="${pageContext.request.contextPath}/dept/listEmps_ByDeptno_A" >
                     <b><font color=blue>選擇部門:</font></b>
                     <select size="1" name="deptno">
-                        <c:forEach var="deptDO" items="${deptDOs}" >
-                            <option value="${deptDO.deptno}">${deptDO.dname}
+                        <c:forEach var="deptVO" items="${deptVOs}" >
+                            <option value="${deptVO.deptno}">${deptVsO.dname}
                         </c:forEach>
                     </select>
                     <input type="submit" value="送出">
