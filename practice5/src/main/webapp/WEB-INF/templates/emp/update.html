@@ -1,0 +1,56 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>員工資料修改</title>
+</head>
+<body>
+	<h3>員工資料修改</h3>
+	<form method="POST" th:action="@{/emp/update}" th:object="${empVO}" name="form1">
+		<table>
+			<tr>
+				<td>員工編號:<font color=red><b>*</b></font></td>
+				<td th:text="*{empno}"></td>
+			</tr>
+			<tr>
+				<td>員工姓名:</td>
+				<td><input type="text" name="ename" size="45"
+					th:field="*{ename}" /></td>
+			</tr>
+			<tr>
+				<td>職位:</td>
+				<td><input type="text" name="job" size="45"
+					th:field="*{job}" /></td>
+			</tr>
+			<tr>
+				<td>雇用日期:</td>
+				<td><input type="date" name="hiredate"
+					th:field="*{hiredate}" /></td>
+			</tr>
+			<tr>
+				<td>薪水:</td>
+				<td><input type="text" name="sal" size="45"
+					th:field="*{sal}" /></td>
+			</tr>
+			<tr>
+				<td>獎金:</td>
+				<td><input type="text" name="comm" size="45"
+					th:field="*{comm}" /></td>
+			</tr>
+			<tr>
+				<td>部門:<font color=red><b>*</b></font></td>
+				<td><select size="1" name="deptno" th:field="*{deptno}">
+							<option th:each="deptVO:${deptVOs}"
+									th:value="${deptVO.deptno}"
+									th:text="${deptVO.dname}">
+							</option>
+					</select>
+				</td>
+			</tr>
+		</table>
+		<br />
+		<input type="hidden" name="empno" th:field="*{empno}">
+		<a th:href="@{/}">回首頁</a> <input
+			type="submit" value="送出修改">
+	</form>
+</body>
+</html>
