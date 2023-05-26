@@ -1,0 +1,51 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>員工資料新增</title>
+<link rel="stylesheet" type="text/css" th:href="@{/css/table.css}">
+<link rel="stylesheet" type="text/css" th:href="@{/css/error.css}">
+</head>
+<body>
+	<h3>員工資料</h3>
+	<form method="POST" th:action="@{/emp/insert}" th:object="${empVO}">
+		<table>
+			<tr>
+				<td>員工姓名:</td>
+				<td><input type="text" th:field="*{ename}" /> <span
+					th:if="${#fields.hasErrors('ename')}" th:errors="*{ename}"
+					class="errormsg"></span></td>
+			</tr>
+			<tr>
+				<td>職位:</td>
+				<td><input type="text" th:field="*{job}" /></td>
+			</tr>
+			<tr>
+				<td>雇用日期:</td>
+				<td><input type="date" th:field="*{hiredate}" /> <span
+					th:if="${#fields.hasErrors('hiredate')}" th:errors="*{hiredate}"
+					class="errormsg"></span></td>
+			</tr>
+			<tr>
+				<td>薪水:</td>
+				<td><input type="text" th:field="*{sal}" /> <span
+					th:if="${#fields.hasErrors('sal')}" th:errors="*{sal}"
+					class="errormsg"></span></td>
+			</tr>
+			<tr>
+				<td>獎金:</td>
+				<td><input type="text" th:field="*{comm}" /> <span
+					th:if="${#fields.hasErrors('comm')}" th:errors="*{comm}"
+					class="errormsg"></span></td>
+			</tr>
+			<tr>
+				<td>部門:<font color=red><b>*</b></font></td>
+				<td><select size="1" name="deptno" th:field="*{deptno}">
+						<option th:each="deptVO:${deptVOs}" th:value="${deptVO.deptno}"
+							th:text="${deptVO.dname}"></option>
+				</select></td>
+			</tr>
+		</table>
+		<br /> <a th:href="@{/}">回首頁</a> <input type="submit" value="送出新增">
+	</form>
+</body>
+</html>

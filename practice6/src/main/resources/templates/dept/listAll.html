@@ -1,0 +1,43 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>所有部門</title>
+<link rel="stylesheet" type="text/css" th:href="@{/css/table.css}">
+</head>
+<body>
+	<h3>所有部門</h3>
+	<table>
+		<tr>
+			<th>部門編號</th>
+			<th>部門名稱</th>
+			<th>部門基地</th>
+			<th>修改</th>
+			<th>刪除<font color=red>(關聯測試)</font></th>
+			<th>查詢部門員工</th>
+		</tr>
+
+		<tr th:each="deptVO:${deptVOs}" align='center' valign='middle'>
+			<td th:text="${deptVO.deptno}"></td>
+			<td th:text="${deptVO.dname}"></td>
+			<td th:text="${deptVO.loc}"></td>
+			<td>
+				<form method="POST" th:action="@{/dept/getOne_For_Update_Dept}">
+					<input type="submit" value="修改">
+					<input type="hidden" name="deptno" th:value="${deptVO.deptno}">
+				</form>
+			</td>
+			<td>
+				<form method="POST" th:action="@{/dept/delete_Dept}">
+					<input type="submit" value="刪除">
+					<input type="hidden" name="deptno" th:value="${deptVO.deptno}">
+				</form>
+			</td>
+			<td><a th:href="@{/dept/listEmps_ByDeptno_B/{deptno}(deptno=${deptVO.deptno})}">送出查詢</a>
+			</td>
+		</tr>
+	</table>
+	<br />
+	<div th:if="${listEmps_ByDeptno != null}" th:include="dept/listEmpsByDeptno::emps"></div>
+	<a th:unless="${listEmps_ByDeptno != null}" th:href="@{/}">回首頁</a>
+</body>
+</html>
